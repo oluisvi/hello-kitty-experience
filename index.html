@@ -15,7 +15,7 @@
     />
     <meta property="og:type" content="website" />
     <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="/assets/models/hello-kitty.glb" as="fetch" crossorigin="anonymous" />
+    <link rel="preload" href="/assets/models/hello-kitty-01.glb" as="fetch" crossorigin="anonymous" />
     <link rel="preload" href="/assets/photos/photo-03.webp" as="image" type="image/webp" />
     <link rel="stylesheet" href="/src/styles/main.css" />
     <title>a little world for you ♡</title>
@@ -90,7 +90,7 @@
             <span class="fallback-bow"><i></i><b></b><em></em></span>
             <strong>♡</strong>
           </div>
-          <span class="kitty-stage__tag">tiny guardian of this page</span>
+          <span class="kitty-stage__tag">drag to spin · 360°</span>
         </div>
 
         <div class="hero__scroll-note" aria-hidden="true">scroll slowly — there are secrets</div>
@@ -209,6 +209,7 @@
               <span class="fallback-bow"><i></i><b></b><em></em></span>
               <strong>♡</strong>
             </div>
+            <span class="kitty-interaction-hint">drag to spin · 360°</span>
             <span class="dream-stage__orb dream-stage__orb--a" aria-hidden="true"></span>
             <span class="dream-stage__orb dream-stage__orb--b" aria-hidden="true"></span>
             <div class="dream-ground" aria-hidden="true">
@@ -256,6 +257,21 @@
             loading="lazy"
             decoding="async"
           />
+        </div>
+
+        <div class="final-kitty-stage reveal" data-reveal>
+          <span class="final-kitty-stage__halo" aria-hidden="true"></span>
+          <canvas
+            id="final-kitty-canvas"
+            class="kitty-canvas kitty-canvas--final"
+            aria-label="A third interactive 3D Hello Kitty model. Drag to rotate it in any direction."
+            role="img"
+          ></canvas>
+          <div class="kitty-fallback kitty-fallback--final" data-kitty-fallback aria-hidden="true">
+            <span class="fallback-bow"><i></i><b></b><em></em></span>
+            <strong>♡</strong>
+          </div>
+          <span class="kitty-interaction-hint kitty-interaction-hint--final">spin me ♡</span>
         </div>
 
         <div class="final-copy reveal" data-reveal>

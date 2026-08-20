@@ -10,7 +10,10 @@ const required = [
   'src/main.js',
   'src/styles/main.css',
   'src/three/kitty3d.js',
-  'public/assets/models/hello-kitty.glb',
+  'src/data/kitty-models.js',
+  'public/assets/models/hello-kitty-01.glb',
+  'public/assets/models/hello-kitty-02.glb',
+  'public/assets/models/hello-kitty-03.glb',
   ...Array.from({ length: 8 }, (_, index) => `public/assets/photos/photo-${String(index + 1).padStart(2, '0')}.webp`),
 ]
 
@@ -21,7 +24,7 @@ for (const file of required) {
 }
 
 const html = await readFile(join(root, 'index.html'), 'utf8')
-for (const expected of ['/src/main.js', '/src/styles/main.css', '/assets/models/hello-kitty.glb']) {
+for (const expected of ['/src/main.js', '/src/styles/main.css', '/assets/models/hello-kitty-01.glb']) {
   if (!html.includes(expected)) throw new Error(`index.html is missing reference: ${expected}`)
 }
 

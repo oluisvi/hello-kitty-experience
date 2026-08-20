@@ -1845,9 +1845,9 @@ canvas[data-model-failed="true"] + .kitty-fallback,
   }
 
   .hero {
-    min-height: 110svh;
+    min-height: 100svh;
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(25rem, 55svh);
+    grid-template-rows: auto minmax(23rem, 50svh);
     align-content: center;
     padding-top: 6.5rem;
     text-align: center;
@@ -1963,11 +1963,23 @@ canvas[data-model-failed="true"] + .kitty-fallback,
 
   .final-section {
     grid-template-columns: 1fr;
-    min-height: 110svh;
+    grid-template-rows: auto minmax(18rem, 34svh);
+    min-height: 108svh;
+    align-content: center;
   }
 
   .final-copy {
     grid-row: 1;
+  }
+
+  .final-kitty-stage {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    grid-row: 2;
+    width: min(25rem, 82vw);
+    justify-self: center;
+    transform: none;
   }
 
   .final-photo {
@@ -1990,9 +2002,11 @@ canvas[data-model-failed="true"] + .kitty-fallback,
   }
 
   .hero {
-    min-height: 108svh;
-    padding-top: 5.8rem;
-    grid-template-rows: auto minmax(21rem, 46svh);
+    min-height: 100svh;
+    padding-top: max(4.8rem, env(safe-area-inset-top));
+    padding-bottom: 4.5rem;
+    grid-template-rows: auto minmax(19rem, 43svh);
+    gap: 0.35rem;
   }
 
   .hero h2 {
@@ -2088,7 +2102,19 @@ canvas[data-model-failed="true"] + .kitty-fallback,
   }
 
   .final-section {
-    padding-bottom: 9rem;
+    min-height: auto;
+    padding-top: 6.5rem;
+    padding-bottom: 8.5rem;
+    grid-template-rows: auto minmax(17rem, 46vw);
+  }
+
+  .final-kitty-stage {
+    width: min(21rem, 88vw);
+  }
+
+  .kitty-interaction-hint {
+    bottom: 2%;
+    font-size: 0.66rem;
   }
 
   .final-reveal__photo {
@@ -2103,6 +2129,132 @@ canvas[data-model-failed="true"] + .kitty-fallback,
   .tiny-footer {
     justify-content: center;
     text-align: center;
+  }
+}
+
+
+.kitty-canvas {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.kitty-canvas.is-dragging {
+  cursor: grabbing;
+}
+
+.kitty-interaction-hint {
+  position: absolute;
+  z-index: 9;
+  left: 50%;
+  bottom: 4%;
+  padding: 0.42rem 0.72rem;
+  color: rgb(255 255 255 / 80%);
+  background: rgb(48 31 73 / 28%);
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  font-family: var(--hand);
+  font-size: 0.72rem;
+  pointer-events: none;
+  transform: translateX(-50%) rotate(-1deg);
+}
+
+.final-kitty-stage {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: -1.5rem;
+  width: clamp(16rem, 28vw, 28rem);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+}
+
+.final-kitty-stage__halo {
+  position: absolute;
+  inset: 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 255 255 / 78%) 0 34%, rgb(255 201 221 / 36%) 58%, transparent 72%);
+  filter: blur(5px);
+}
+
+.kitty-canvas--final {
+  position: relative;
+  z-index: 4;
+  filter: drop-shadow(0 24px 34px rgb(177 66 111 / 15%));
+}
+
+.kitty-fallback--final {
+  z-index: 2;
+  inset: 14%;
+}
+
+.kitty-interaction-hint--final {
+  color: var(--kitty-red);
+  background: rgb(255 255 255 / 78%);
+  border-color: rgb(236 62 80 / 12%);
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --page-gutter: clamp(4rem, 6vw, 8rem);
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 0.9fr) minmax(34rem, 1.1fr);
+    max-width: 1920px;
+    margin-inline: auto;
+  }
+
+  .hero__copy {
+    max-width: 46rem;
+  }
+
+  .kitty-stage {
+    width: min(54rem, 100%);
+  }
+
+  .letter-card {
+    max-width: 44rem;
+  }
+
+  .scrapbook__desk {
+    max-width: 1480px;
+  }
+
+  .dream-section__sticky {
+    max-width: 1920px;
+    margin-inline: auto;
+  }
+
+  .film-strip__rail {
+    padding-inline: max(var(--page-gutter), calc((100vw - 1780px) / 2));
+  }
+
+  .final-kitty-stage {
+    width: 30rem;
+  }
+}
+
+@media (min-width: 821px) and (max-height: 760px) {
+  .hero {
+    min-height: 720px;
+    padding-block: 4.5rem 3.5rem;
+  }
+
+  .hero h2 {
+    font-size: clamp(4rem, 7.2vw, 7.3rem);
+  }
+
+  .kitty-stage {
+    width: min(40rem, 86vh);
+  }
+
+  .note-section,
+  .play-section,
+  .film-section,
+  .final-section {
+    min-height: 720px;
   }
 }
 

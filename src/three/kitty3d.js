@@ -395,6 +395,9 @@ export class Kitty3D {
       cameraZ: 5.2,
       fitSize: 2.75,
       verticalOffset: -0.02,
+      autoRotateSpeed: 0.00032,
+      dragSensitivity: 0.0085,
+      maxPitch: 1.05,
       ...options,
     }
     this.gl = null
@@ -405,6 +408,12 @@ export class Kitty3D {
     this.scale = 1
     this.pointer = { x: 0, y: 0 }
     this.targetPointer = { x: 0, y: 0 }
+    this.userRotation = { yaw: 0, pitch: 0 }
+    this.targetUserRotation = { yaw: 0, pitch: 0 }
+    this.dragging = false
+    this.dragOrigin = { x: 0, y: 0, yaw: 0, pitch: 0 }
+    this.autoRotationY = 0
+    this.lastFrameTime = 0
     this.scrollInfluence = 0
     this.visible = true
     this.ready = false
@@ -493,7 +502,10 @@ export class Kitty3D {
       this.intersectionObserver = new IntersectionObserver(
         ([entry]) => {
           this.visible = entry.isIntersecting
-          if (this.visible && !this.frame) this.frame = requestAnimationFrame(this.render)
+          if (this.visible && !this.frame) {
+            this.lastFrameTime = 0
+            this.frame = requestAnimationFrame(this.render)
+          }
         },
         { rootMargin: '120px' },
       )
@@ -513,9 +525,42 @@ export class Kitty3D {
   }
 
   setPointer(x, y) {
-    if (this.reducedMotion) return
+    if (this.reducedMotion || this.dragging) return
     this.targetPointer.x = clamp(x, -1, 1)
     this.targetPointer.y = clamp(y, -1, 1)
+  }
+
+  beginDrag(clientX, clientY) {
+    this.dragging = true
+    this.targetPointer.x = 0
+    this.targetPointer.y = 0
+    this.dragOrigin = {
+      x: clientX,
+      y: clientY,
+      yaw: this.targetUserRotation.yaw,
+      pitch: this.targetUserRotation.pitch,
+    }
+  }
+
+  dragTo(clientX, clientY) {
+    if (!this.dragging) return
+    const dx = clientX - this.dragOrigin.x
+    const dy = clientY - this.dragOrigin.y
+    this.targetUserRotation.yaw = this.dragOrigin.yaw + dx * this.options.dragSensitivity
+    this.targetUserRotation.pitch = clamp(
+      this.dragOrigin.pitch - dy * this.options.dragSensitivity,
+      -this.options.maxPitch,
+      this.options.maxPitch,
+    )
+  }
+
+  endDrag() {
+    this.dragging = false
+  }
+
+  advanceAutoRotation(deltaMs) {
+    if (this.reducedMotion || this.dragging) return
+    this.autoRotationY = (this.autoRotationY + deltaMs * this.options.autoRotateSpeed) % (Math.PI * 2)
   }
 
   setScroll(progress) {
@@ -544,8 +589,17 @@ export class Kitty3D {
 
   globalMatrix(time) {
     const auto = this.reducedMotion ? 0 : Math.sin(time * 0.00075) * 0.045
-    const tiltX = this.options.baseRotationX + this.pointer.y * 0.11 + this.scrollInfluence * 0.035
-    const tiltY = this.options.baseRotationY + this.pointer.x * 0.2 + this.scrollInfluence * 0.08
+    const tiltX =
+      this.options.baseRotationX +
+      this.userRotation.pitch +
+      this.pointer.y * 0.08 +
+      this.scrollInfluence * 0.025
+    const tiltY =
+      this.options.baseRotationY +
+      this.autoRotationY +
+      this.userRotation.yaw +
+      this.pointer.x * 0.12 +
+      this.scrollInfluence * 0.05
     const tiltZ = auto * 0.35
     const bob = this.reducedMotion ? 0 : Math.sin(time * 0.0011) * 0.055
 
@@ -561,8 +615,13 @@ export class Kitty3D {
     if (!this.gl || !this.program || !this.ready || !this.visible) return
 
     const gl = this.gl
+    const deltaMs = this.lastFrameTime ? Math.min(50, time - this.lastFrameTime) : 16.67
+    this.lastFrameTime = time
+    this.advanceAutoRotation(deltaMs)
     this.pointer.x = lerp(this.pointer.x, this.targetPointer.x, 0.055)
     this.pointer.y = lerp(this.pointer.y, this.targetPointer.y, 0.055)
+    this.userRotation.yaw = lerp(this.userRotation.yaw, this.targetUserRotation.yaw, this.dragging ? 0.24 : 0.11)
+    this.userRotation.pitch = lerp(this.userRotation.pitch, this.targetUserRotation.pitch, this.dragging ? 0.24 : 0.11)
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     gl.useProgram(this.program)

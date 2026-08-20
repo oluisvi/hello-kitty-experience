@@ -1,4 +1,5 @@
 import { memories } from './data/memories.js'
+import { kittyModels } from './data/kitty-models.js'
 import { motionProfile } from './hooks/motion-profile.js'
 import { Kitty3D } from './three/kitty3d.js'
 import {
@@ -97,43 +98,131 @@ cleanup.push(observeReveals())
 
 const heroCanvas = document.getElementById('hero-kitty-canvas')
 const dreamCanvas = document.getElementById('dream-kitty-canvas')
-const heroKitty = new Kitty3D(heroCanvas, {
-  baseRotationY: 0,
-  fitSize: compact ? 2.55 : 2.85,
-  verticalOffset: compact ? -0.02 : -0.08,
-})
-const dreamKitty = new Kitty3D(dreamCanvas, {
-  baseRotationY: 0.06,
-  fitSize: compact ? 2.45 : 2.72,
-  cameraZ: 5.35,
-  verticalOffset: -0.04,
-})
+const finalCanvas = document.getElementById('final-kitty-canvas')
 
-heroKitty.init()
-dreamKitty.init()
+function createKitty(canvas, model, compactFitDelta = 0) {
+  return new Kitty3D(canvas, {
+    modelUrl: model.url,
+    baseRotationY: model.frontRotationY,
+    fitSize: compact ? model.fitSize + compactFitDelta : model.fitSize,
+    cameraZ: model.cameraZ,
+    verticalOffset: model.verticalOffset,
+    autoRotateSpeed: compact ? 0.00024 : 0.0003,
+    dragSensitivity: compact ? 0.0095 : 0.0075,
+  })
+}
+
+const heroKitty = createKitty(heroCanvas, kittyModels[0], -0.22)
+const dreamKitty = createKitty(dreamCanvas, kittyModels[1], -0.18)
+const finalKitty = createKitty(finalCanvas, kittyModels[2], -0.16)
+const kittyInstances = [heroKitty, dreamKitty, finalKitty]
+const kittyCanvases = [heroCanvas, dreamCanvas, finalCanvas]
+
+function initKittyWhenNear(canvas, instance, { eager = false } = {}) {
+  if (eager || !('IntersectionObserver' in window)) {
+    instance.init()
+    return () => {}
+  }
+
+  let initialized = false
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting || initialized) return
+      initialized = true
+      observer.disconnect()
+      instance.init()
+    },
+    { rootMargin: compact ? '420px 0px' : '700px 0px' },
+  )
+  observer.observe(canvas)
+  return () => observer.disconnect()
+}
+
+cleanup.push(initKittyWhenNear(heroCanvas, heroKitty, { eager: true }))
+cleanup.push(initKittyWhenNear(dreamCanvas, dreamKitty))
+cleanup.push(initKittyWhenNear(finalCanvas, finalKitty))
 
 function wireCanvas(canvas, instance) {
-  const move = (event) => {
+  let startX = 0
+  let startY = 0
+  let activePointerId = null
+
+  const setHoverPointer = (event) => {
     const rect = canvas.getBoundingClientRect()
+    if (!rect.width || !rect.height) return
     const x = ((event.clientX - rect.left) / rect.width) * 2 - 1
     const y = -(((event.clientY - rect.top) / rect.height) * 2 - 1)
     instance.setPointer(x, y)
   }
-  const reset = () => instance.setPointer(0, 0)
-  canvas.addEventListener('pointermove', move, { passive: true })
-  canvas.addEventListener('pointerleave', reset, { passive: true })
+
+  const onPointerDown = (event) => {
+    if (event.button !== undefined && event.button !== 0) return
+    activePointerId = event.pointerId
+    startX = event.clientX
+    startY = event.clientY
+    canvas.dataset.wasDragged = 'false'
+    canvas.classList.add('is-dragging')
+    try {
+      canvas.setPointerCapture?.(event.pointerId)
+    } catch {
+      // Synthetic events and a few embedded browsers can reject pointer capture.
+    }
+    instance.beginDrag(event.clientX, event.clientY)
+  }
+
+  const onPointerMove = (event) => {
+    if (activePointerId === event.pointerId && instance.dragging) {
+      instance.dragTo(event.clientX, event.clientY)
+      if (Math.hypot(event.clientX - startX, event.clientY - startY) > 5) {
+        canvas.dataset.wasDragged = 'true'
+      }
+      return
+    }
+    setHoverPointer(event)
+  }
+
+  const finishDrag = (event) => {
+    if (activePointerId !== null && event.pointerId !== activePointerId) return
+    try {
+      if (activePointerId !== null && canvas.hasPointerCapture?.(activePointerId)) {
+        canvas.releasePointerCapture(activePointerId)
+      }
+    } catch {
+      // Keep the interaction usable even if capture was already released.
+    }
+    activePointerId = null
+    canvas.classList.remove('is-dragging')
+    instance.endDrag()
+    instance.setPointer(0, 0)
+  }
+
+  const resetHover = () => {
+    if (!instance.dragging) instance.setPointer(0, 0)
+  }
+
+  canvas.addEventListener('pointerdown', onPointerDown)
+  canvas.addEventListener('pointermove', onPointerMove, { passive: true })
+  canvas.addEventListener('pointerup', finishDrag)
+  canvas.addEventListener('pointercancel', finishDrag)
+  canvas.addEventListener('pointerleave', resetHover, { passive: true })
+
   cleanup.push(() => {
-    canvas.removeEventListener('pointermove', move)
-    canvas.removeEventListener('pointerleave', reset)
+    canvas.removeEventListener('pointerdown', onPointerDown)
+    canvas.removeEventListener('pointermove', onPointerMove)
+    canvas.removeEventListener('pointerup', finishDrag)
+    canvas.removeEventListener('pointercancel', finishDrag)
+    canvas.removeEventListener('pointerleave', resetHover)
   })
 }
 
-wireCanvas(heroCanvas, heroKitty)
-wireCanvas(dreamCanvas, dreamKitty)
+kittyCanvases.forEach((canvas, index) => wireCanvas(canvas, kittyInstances[index]))
 
 let kittyClicks = 0
 heroCanvas.addEventListener('click', (event) => {
-  if (!body.classList.contains('has-entered')) return
+  if (!body.classList.contains('has-entered') || heroCanvas.dataset.wasDragged === 'true') {
+    heroCanvas.dataset.wasDragged = 'false'
+    return
+  }
   kittyClicks += 1
   heartBurst(event.clientX, event.clientY, kittyClicks >= 5 ? 24 : 7, {
     spread: kittyClicks >= 5 ? 150 : 58,
@@ -146,10 +235,22 @@ heroCanvas.addEventListener('click', (event) => {
 })
 
 dreamCanvas.addEventListener('click', (event) => {
+  if (dreamCanvas.dataset.wasDragged === 'true') {
+    dreamCanvas.dataset.wasDragged = 'false'
+    return
+  }
   heartBurst(event.clientX, event.clientY, 10, { spread: 75 })
 })
 
-for (const canvas of [heroCanvas, dreamCanvas]) {
+finalCanvas.addEventListener('click', (event) => {
+  if (finalCanvas.dataset.wasDragged === 'true') {
+    finalCanvas.dataset.wasDragged = 'false'
+    return
+  }
+  heartBurst(event.clientX, event.clientY, 12, { spread: 82 })
+})
+
+for (const canvas of kittyCanvases) {
   canvas.addEventListener('kitty:model-error', () => {
     const fallback = canvas.parentElement?.querySelector('[data-kitty-fallback]')
     fallback?.classList.add('is-visible')
@@ -252,6 +353,10 @@ function updateScrollEffects() {
   const dream = document.getElementById('dream').getBoundingClientRect()
   const dreamProgress = (window.innerHeight * 0.5 - dream.top) / Math.max(dream.height, 1)
   dreamKitty.setScroll((dreamProgress - 0.5) * 1.3)
+
+  const final = document.querySelector('.final-section').getBoundingClientRect()
+  const finalProgress = (window.innerHeight * 0.5 - final.top) / Math.max(final.height, 1)
+  finalKitty.setScroll((finalProgress - 0.5) * 0.9)
 }
 
 window.addEventListener('scroll', updateScrollEffects, { passive: true })
@@ -291,6 +396,5 @@ document.addEventListener('keydown', (event) => {
 
 window.addEventListener('beforeunload', () => {
   cleanup.forEach((dispose) => dispose?.())
-  heroKitty.destroy()
-  dreamKitty.destroy()
+  kittyInstances.forEach((instance) => instance.destroy())
 })
