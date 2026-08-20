@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fff4f8" />
+    <meta
+      name="description"
+      content="A tiny interactive world made with photos, hearts, sparkles and a little 3D Hello Kitty magic."
+    />
+    <meta property="og:title" content="a little world for you ♡" />
+    <meta
+      property="og:description"
+      content="A personal interactive scrapbook full of cute memories, tiny surprises and 3D magic."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/assets/models/hello-kitty.glb" as="fetch" crossorigin="anonymous" />
+    <link rel="preload" href="/assets/photos/photo-03.webp" as="image" type="image/webp" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <title>a little world for you ♡</title>
+  </head>
+  <body class="is-locked">
+    <a class="skip-link" href="#main">skip to the little world</a>
+
+    <div class="intro" id="intro" aria-labelledby="intro-title">
+      <div class="intro__noise" aria-hidden="true"></div>
+      <div class="intro__orbit intro__orbit--one" aria-hidden="true">♡</div>
+      <div class="intro__orbit intro__orbit--two" aria-hidden="true">✦</div>
+      <div class="intro__content">
+        <p class="intro__tiny">psst...</p>
+        <h1 id="intro-title">I made a little world for you ♡</h1>
+        <p class="intro__copy">nothing serious. just photos, pink, tiny surprises and too much cuteness.</p>
+        <button class="sticker-button sticker-button--enter" id="enter-button" type="button">
+          <span>enter ♡</span>
+        </button>
+      </div>
+      <div class="intro__bottom-note" aria-hidden="true">made with an unreasonable amount of hearts</div>
+    </div>
+
+    <div class="page-grain" aria-hidden="true"></div>
+    <div class="ambient-layer" id="ambient-layer" aria-hidden="true"></div>
+    <div class="progress-charm" aria-hidden="true">
+      <div class="progress-charm__track"><span id="progress-heart">♥</span></div>
+    </div>
+
+    <main id="main">
+      <section class="hero section-pink" id="hello" aria-labelledby="hero-title">
+        <div class="hero__backdrop" aria-hidden="true">
+          <span class="hero-blob hero-blob--a"></span>
+          <span class="hero-blob hero-blob--b"></span>
+          <span class="floating-word floating-word--one parallax" data-depth="0.32">cute!</span>
+          <span class="floating-word floating-word--two parallax" data-depth="0.52">♡</span>
+          <span class="bow bow--hero parallax" data-depth="0.72"><i></i><b></b><em></em></span>
+          <span class="doodle-star doodle-star--hero-a parallax" data-depth="0.44">✦</span>
+          <span class="doodle-star doodle-star--hero-b parallax" data-depth="0.22">✧</span>
+        </div>
+
+        <div class="hero__copy reveal" data-reveal>
+          <p class="scribble">welcome to</p>
+          <h2 id="hero-title">your little<br /><span>world ♡</span></h2>
+          <p class="hero__description">
+            a tiny corner of the internet where everything is softer, pinker and somehow about you.
+          </p>
+          <a class="soft-link" href="#note">come closer <span aria-hidden="true">↓</span></a>
+        </div>
+
+        <div class="hero__portrait reveal" data-reveal>
+          <div class="photo-tape photo-tape--top" aria-hidden="true"></div>
+          <img
+            src="/assets/photos/photo-03.webp"
+            alt="Close portrait with long dark hair, nose ring and a brown jacket outdoors."
+            width="607"
+            height="690"
+            decoding="async"
+          />
+          <span class="hero__portrait-note">pretty girl department</span>
+        </div>
+
+        <div class="kitty-stage reveal" data-reveal>
+          <span class="kitty-stage__halo" aria-hidden="true"></span>
+          <span class="kitty-stage__shadow" aria-hidden="true"></span>
+          <canvas
+            id="hero-kitty-canvas"
+            class="kitty-canvas"
+            aria-label="Interactive 3D Hello Kitty model"
+            role="img"
+          ></canvas>
+          <div class="kitty-fallback" data-kitty-fallback aria-hidden="true">
+            <span class="fallback-bow"><i></i><b></b><em></em></span>
+            <strong>♡</strong>
+          </div>
+          <span class="kitty-stage__tag">tiny guardian of this page</span>
+        </div>
+
+        <div class="hero__scroll-note" aria-hidden="true">scroll slowly — there are secrets</div>
+      </section>
+
+      <section class="note-section section-cream" id="note" aria-labelledby="note-title">
+        <div class="section-transition section-transition--pink-cream" aria-hidden="true"></div>
+        <div class="note-section__doodles" aria-hidden="true">
+          <span>♡</span><span>✦</span><span>♡</span><span>✧</span>
+        </div>
+
+        <article class="letter-card reveal" data-reveal>
+          <div class="letter-card__pin" aria-hidden="true"></div>
+          <p class="letter-card__eyeline">a small note</p>
+          <h2 id="note-title">you make everything a little cuter ♡</h2>
+          <p>
+            So I put together a tiny digital scrapbook: a few favorite photos, a little Hello Kitty magic,
+            and enough pink details to make the browser blush.
+          </p>
+          <p class="letter-card__signature">for you, obviously ♡</p>
+        </article>
+
+        <div class="note-photo note-photo--left reveal" data-reveal>
+          <img
+            src="/assets/photos/photo-06.webp"
+            alt="Close-up portrait with dark hair, natural freckles and soft low-light makeup."
+            loading="lazy"
+            decoding="async"
+          />
+          <span>tiny details</span>
+        </div>
+
+        <div class="note-photo note-photo--right reveal" data-reveal>
+          <img
+            src="/assets/photos/photo-05.webp"
+            alt="Smiling portrait in a black top with dark hair and a playful hand pose."
+            loading="lazy"
+            decoding="async"
+          />
+          <span>this smile!!</span>
+        </div>
+      </section>
+
+      <section class="scrapbook section-paper" id="memories" aria-labelledby="scrapbook-title">
+        <div class="scrapbook__heading reveal" data-reveal>
+          <span class="scribble scribble--red">drag them around</span>
+          <h2 id="scrapbook-title">pretty memories</h2>
+          <p>the page is allowed to get a little messy here.</p>
+        </div>
+
+        <div class="scrapbook__desk" id="scrapbook-desk" aria-label="Draggable photo scrapbook">
+          <div class="desk-sticker desk-sticker--heart" aria-hidden="true">♥</div>
+          <div class="desk-sticker desk-sticker--flower" aria-hidden="true">✿</div>
+          <div class="desk-sticker desk-sticker--star" aria-hidden="true">✦</div>
+          <div class="desk-sticker desk-sticker--note" aria-hidden="true">favorite<br />human ♡</div>
+          <div id="scrapbook-cards"></div>
+        </div>
+
+        <p class="scrapbook__hint reveal" data-reveal>
+          click a photo if you want to see it properly. drag it if you feel chaotic.
+        </p>
+      </section>
+
+      <section class="play-section section-lavender" aria-labelledby="play-title">
+        <div class="play-section__copy reveal" data-reveal>
+          <span class="scribble">little game</span>
+          <h2 id="play-title">move the sticker.</h2>
+          <p>there might be something hiding under it. or maybe not.</p>
+        </div>
+
+        <div class="secret-board reveal" data-reveal>
+          <div class="secret-board__message" id="secret-message">
+            <span>secret unlocked ✦</span>
+            <strong>you deserve a page this extra.</strong>
+            <small>and yes, this was hiding here the whole time.</small>
+          </div>
+          <button
+            class="draggable-sticker secret-sticker"
+            id="secret-sticker"
+            type="button"
+            aria-label="Move the heart sticker to reveal the hidden message"
+          >
+            <span>♥</span>
+            <small>move me</small>
+          </button>
+          <span class="secret-board__tape secret-board__tape--a" aria-hidden="true"></span>
+          <span class="secret-board__tape secret-board__tape--b" aria-hidden="true"></span>
+        </div>
+
+        <button class="tiny-star-button" id="tiny-star-button" type="button" aria-label="A tiny clickable star">✦</button>
+      </section>
+
+      <section class="dream-section" id="dream" aria-labelledby="dream-title">
+        <div class="dream-section__sky" aria-hidden="true">
+          <span class="dream-cloud dream-cloud--one"></span>
+          <span class="dream-cloud dream-cloud--two"></span>
+          <span class="dream-cloud dream-cloud--three"></span>
+          <span class="dream-heart-moon">♥</span>
+        </div>
+
+        <div class="dream-section__sticky">
+          <div class="dream-copy reveal" data-reveal>
+            <span class="scribble scribble--light">then the page gets dreamy</span>
+            <h2 id="dream-title">a tiny pink universe.</h2>
+            <p>same Hello Kitty. different atmosphere. still following you around a little.</p>
+          </div>
+
+          <div class="dream-stage reveal" data-reveal>
+            <canvas
+              id="dream-kitty-canvas"
+              class="kitty-canvas kitty-canvas--dream"
+              aria-label="A second interactive 3D Hello Kitty scene"
+              role="img"
+            ></canvas>
+            <div class="kitty-fallback kitty-fallback--dream" data-kitty-fallback aria-hidden="true">
+              <span class="fallback-bow"><i></i><b></b><em></em></span>
+              <strong>♡</strong>
+            </div>
+            <span class="dream-stage__orb dream-stage__orb--a" aria-hidden="true"></span>
+            <span class="dream-stage__orb dream-stage__orb--b" aria-hidden="true"></span>
+            <div class="dream-ground" aria-hidden="true">
+              <span class="flower flower--1">✿</span>
+              <span class="flower flower--2">✿</span>
+              <span class="flower flower--3">✿</span>
+              <span class="flower flower--4">✿</span>
+              <span class="flower flower--5">✿</span>
+            </div>
+          </div>
+
+          <div class="dream-polaroid dream-polaroid--a reveal" data-reveal>
+            <img
+              src="/assets/photos/photo-07.webp"
+              alt="Portrait in a brown lace-up top while holding a small puppy indoors."
+              loading="lazy"
+              decoding="async"
+            />
+            <span>double cuteness</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="film-section section-white" aria-labelledby="film-title">
+        <div class="film-section__heading reveal" data-reveal>
+          <span class="scribble scribble--red">one more roll</span>
+          <h2 id="film-title">camera roll favorites</h2>
+          <p>drag sideways, like you're snooping through a very curated film strip.</p>
+        </div>
+
+        <div class="film-strip" id="film-strip" aria-label="Horizontal photo gallery">
+          <div class="film-strip__rail" id="film-strip-rail"></div>
+        </div>
+      </section>
+
+      <section class="final-section section-pink" aria-labelledby="final-title">
+        <div class="final-section__sparkles" aria-hidden="true">
+          <span>✦</span><span>♡</span><span>✧</span><span>♥</span><span>✦</span>
+        </div>
+
+        <div class="final-photo final-photo--left reveal" data-reveal>
+          <img
+            src="/assets/photos/photo-02.webp"
+            alt="Portrait turned over the shoulder with long dark hair and a black top indoors."
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <div class="final-copy reveal" data-reveal>
+          <span class="scribble">that's almost it</span>
+          <h2 id="final-title">made with ♡<br />just for you.</h2>
+          <p>there is, naturally, one last unnecessary surprise.</p>
+          <button class="sticker-button" id="final-reveal-button" type="button">one more thing ♡</button>
+        </div>
+
+        <div class="final-photo final-photo--right reveal" data-reveal>
+          <img
+            src="/assets/photos/photo-08.webp"
+            alt="Mirror portrait sitting by a bathroom counter in a black top and white pants."
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </section>
+    </main>
+
+    <footer class="tiny-footer">
+      <span>♡ made as a tiny personal web experience</span>
+      <a
+        href="https://sketchfab.com/3d-models/hello-kitty-31cfcb2328af4f8eb4da75e13d922258"
+        target="_blank"
+        rel="noreferrer"
+      >3D model: FreshHyena4258 · CC BY 4.0</a>
+    </footer>
+
+    <dialog class="photo-dialog" id="photo-dialog" aria-labelledby="lightbox-caption">
+      <button class="photo-dialog__close" data-lightbox-close type="button" aria-label="Close photo">×</button>
+      <div class="photo-dialog__frame">
+        <img data-lightbox-image alt="" />
+        <div class="photo-dialog__copy">
+          <strong id="lightbox-caption" data-lightbox-caption></strong>
+          <span data-lightbox-note></span>
+        </div>
+      </div>
+    </dialog>
+
+    <div class="final-reveal" id="final-reveal" aria-hidden="true">
+      <button class="final-reveal__close" id="final-reveal-close" type="button" aria-label="Close final surprise">×</button>
+      <div class="final-reveal__cloud final-reveal__cloud--a" aria-hidden="true"></div>
+      <div class="final-reveal__cloud final-reveal__cloud--b" aria-hidden="true"></div>
+      <div class="final-reveal__photos" aria-hidden="true">
+        <img class="final-reveal__photo final-reveal__photo--1" src="/assets/photos/photo-01.webp" alt="" />
+        <img class="final-reveal__photo final-reveal__photo--2" src="/assets/photos/photo-04.webp" alt="" />
+        <img class="final-reveal__photo final-reveal__photo--3" src="/assets/photos/photo-05.webp" alt="" />
+        <img class="final-reveal__photo final-reveal__photo--4" src="/assets/photos/photo-07.webp" alt="" />
+      </div>
+      <div class="final-reveal__message">
+        <span>♡</span>
+        <h2>okay, that's actually it.</h2>
+        <p>you make the internet look cuter.</p>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
